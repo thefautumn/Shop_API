@@ -1,4 +1,5 @@
 // controllers/authController.js
+const { exists } = require('../models/Category');
 const authService = require('../services/authService');
 const { validationResult } = require('express-validator');
 
@@ -13,7 +14,7 @@ exports.login = async (req, res) => {
     const { token, userId } = await authService.loginUser(email, password);
     res.status(200).json({ token, userId });
   } catch (error) {
-    res.status(401).json({ message: error.message });
+    res.status(401).json({ message: 'Email or password does not exists/match' });
   }
 };
 
@@ -23,12 +24,12 @@ exports.register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { name, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
   try {
-    const user = await authService.registerUser(name, email, password);
+    const user = await authService.registerUser(firstName, lastName, email, password);
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Email đã tồn tại' });
   }
 };
 
