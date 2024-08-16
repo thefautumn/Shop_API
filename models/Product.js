@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
   description: { type: String },
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Cate', required: true }, 
   gender: { type: String, enum: ['Nam', 'Nữ'], required: true },  
-  imageUrl: { type: String }, 
+  imageUrl: { type: [String], default: [] }, // Array of strings, default to empty array
   stocks: [stockSchema], 
   reviews: [reviewSchema]  
 });
