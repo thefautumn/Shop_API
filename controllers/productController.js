@@ -1,7 +1,7 @@
 // controllers/productController.js
 
 const productService = require('../services/productService');
-
+const Category = require('../models/Category');
 exports.createProduct = async (req, res) => {
   try {
     const savedProduct = await productService.createProduct(req.body);
@@ -22,13 +22,15 @@ exports.getProducts = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   try {
-    const product = await productService.getProductById(req.params.id);
-    if (!product) {
+    const productWithCategories = await productService.getProductWithCategoryDetails(req.params.id);
+
+    if (!productWithCategories.product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    res.status(200).json(product);
+
+    res.status(200).json(productWithCategories);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch product', error });
+    res.status(500).json({ message: 'Failed to fetch product with category details', error: error.message });
   }
 };
 
