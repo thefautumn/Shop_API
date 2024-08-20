@@ -1,4 +1,3 @@
-// models/CartItem.js
 const mongoose = require('mongoose');
 
 const cartItemSchema = new mongoose.Schema({
@@ -8,7 +7,7 @@ const cartItemSchema = new mongoose.Schema({
   size: { type: String, required: true },
   quantity: { type: Number, required: true },
   imageUrl: { type: String, required: true },
-  cartId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart', required: true }  
+  cartId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart', required: true }
 });
 
 module.exports = mongoose.model('CartItem', cartItemSchema);

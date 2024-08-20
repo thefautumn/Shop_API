@@ -1,25 +1,24 @@
-// models/Order.js
-const mongoose = require('mongoose');
-
 const orderSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Liên kết tới người dùng
-  items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem', required: true }], // Mảng chứa các `OrderItem`
-  totalPrice: { type: Number, required: true }, // Tổng giá trị của đơn hàng
-  orderStatus: { type: String, enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' }, // Trạng thái của đơn hàng
-  paymentMethod: { type: String, required: true }, // Phương thức thanh toán
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem', required: true }],
+  totalPrice: { type: Number, required: true },
+  orderStatus: { type: String, enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' },
+  paymentMethod: { type: String, enum: ['Credit Card', 'PayPal', 'COD', 'VNPay'], required: true },
   shippingAddress: {
-    name: { type: String, required: true }, // Tên người nhận
-    phone: { type: String, required: true }, // Số điện thoại người nhận
-    province: { type: String, required: true }, // Tỉnh/Thành phố
-    district: { type: String, required: true }, // Quận/Huyện
-    ward: { type: String, required: true }, // Phường/Xã
-    detailedAddress: { type: String, required: true } // Địa chỉ chi tiết
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    province: { type: String, required: true },
+    district: { type: String, required: true },
+    ward: { type: String, required: true },
+    detailedAddress: { type: String, required: true }
   },
-  
-  orderDate: { type: Date, default: Date.now }, // Ngày đặt hàng
-  deliveryDate: { type: Date }, // Ngày giao hàng (có thể cập nhật sau)
-  trackingNumber: { type: String }, // Số theo dõi (tùy chọn)
-  notes: { type: String } // Ghi chú thêm của người dùng
+  orderDate: { type: Date, default: Date.now },
+  paymentStatus: { type: String, enum: ['Pending', 'Completed', 'Failed', 'Refunded'], default: 'Pending' }, // Tuỳ chọn
+  transactionId: { type: String }, // Tuỳ chọn
+  paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }, // Tuỳ chọn
+  deliveryDate: { type: Date }, // Tuỳ chọn
+  trackingNumber: { type: String }, // Tuỳ chọn
+  notes: { type: String } // Tuỳ chọn
 });
 
 module.exports = mongoose.model('Order', orderSchema);
