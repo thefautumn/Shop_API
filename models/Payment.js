@@ -8,7 +8,7 @@ const paymentSchema = new mongoose.Schema({
   paymentStatus: { type: String, enum: ['Pending', 'Completed', 'Failed', 'Refunded'], default: 'Pending' }, // Trạng thái thanh toán
   transactionId: { type: String }, // Mã giao dịch từ cổng thanh toán (nếu có)
   amount: { type: Number, required: true }, // Số tiền thanh toán
-  paymentDate: { type: Date, default: Date.now } // Ngày thực hiện thanh toán
+  paymentDate: { type: Date, default: Date.now } 
 });
 
 module.exports = mongoose.model('Payment', paymentSchema);

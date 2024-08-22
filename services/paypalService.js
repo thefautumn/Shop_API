@@ -1,33 +1,51 @@
-const paypalClient = require('../paypal'); // Import PayPal client
-const paypal = require('@paypal/checkout-server-sdk');
+// src/services/paypalService.js
+const axios = require('axios');
+const { generateAccessToken, PAYPAL_API } = require('../paypalConfig');
 
-// Tạo đơn hàng
-const createOrder = async (orderDetails) => {
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.requestBody(orderDetails);
+async function createPaypalOrder(amount) {
+    const accessToken = await generateAccessToken();
 
-    try {
-        const response = await paypalClient.execute(request);
-        return response.result;
-    } catch (error) {
-        throw new Error('Failed to create order: ' + error.message);
-    }
-};
+    const orderResponse = await axios({
+        url: `${PAYPAL_API}/v2/checkout/orders`,
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
+        data: {
+            intent: 'CAPTURE',
+            purchase_units: [{
+                amount: {
+                    currency_code: 'USD',
+                    value: amount.toString(),
+                },
+            }],
+            application_context: {
+                return_url: 'http://localhost:3000/success',
+                cancel_url: 'http://localhost:3000/cancel',
+            },
+        },
+    });
 
-// Hoàn tất đơn hàng
-const captureOrder = async (orderID) => {
-    const request = new paypal.orders.OrdersCaptureRequest(orderID);
-    request.requestBody({});
+    return orderResponse.data;
+}
 
-    try {
-        const capture = await paypalClient.execute(request);
-        return capture.result;
-    } catch (error) {
-        throw new Error('Failed to capture order: ' + error.message);
-    }
-};
+async function capturePaypalPayment(orderId) {
+    const accessToken = await generateAccessToken();
+
+    const captureResponse = await axios({
+        url: `${PAYPAL_API}/v2/checkout/orders/${orderId}/capture`,
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    });
+
+    return captureResponse.data;
+}
 
 module.exports = {
-    createOrder,
-    captureOrder,
+    createPaypalOrder,
+    capturePaypalPayment,
 };

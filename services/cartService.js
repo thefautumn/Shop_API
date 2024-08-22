@@ -121,12 +121,12 @@ exports.getCartWithUserDetails = async (userId) => {
         path: 'items',
         populate: {
           path: 'productId',
-          select: 'name price imageUrl'
+          select: 'name price imageUrl'  
         }
       })
       .populate({
         path: 'userId',
-        select: 'firstName lastName phone province district ward detailedAddress email'
+        select: 'firstName lastName phone province district ward detailedAddress email' 
       })
       .exec();
 

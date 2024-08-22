@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const categoryController = require('../controllers/categoryService');
+const categoryController = require('../controllers/categoryController');
 
 // Định nghĩa các routes và liên kết với controller
 router.get('/', categoryController.getAllCategories);
