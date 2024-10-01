@@ -65,6 +65,9 @@ exports.getCartByUserId = async (userId) => {
     if (!cart) {
       throw new Error('Cart not found');
     }
+    if (cart.items.length === 0) {
+      return { message: 'Cart is empty', items: [] };
+    }
   
     return cart;
   };

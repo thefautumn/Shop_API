@@ -11,10 +11,13 @@ router.get('/', productController.getProducts);
 // Lấy một sản phẩm theo ID
 router.get('/:id', productController.getProductById);
 
+router.get('/category/:categoryName', productController.getProductsByCategory);
+
 // Cập nhật sản phẩm theo ID
 router.put('/:id', productController.updateProduct);
 
 // Xóa sản phẩm theo ID
 router.delete('/:id', productController.deleteProduct);
+
 
 module.exports = router;

@@ -21,17 +21,24 @@ exports.login = async (req, res) => {
 exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ errors: errors.array() });
   }
 
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password: userPassword  } = req.body;
   try {
-    const user = await authService.registerUser(firstName, lastName, email, password);
-    res.status(201).json(user);
+      const user = await authService.registerUser(firstName, lastName, email, userPassword);
+      // Exclude password from response
+      const { password, ...userWithoutPassword } = user.toObject();
+      res.status(201).json(userWithoutPassword);
   } catch (error) {
-    res.status(500).json({ error: 'Email đã tồn tại' });
+      console.error('Registration Error:', error);
+      if (error.message === 'Email already in use') {
+          return res.status(400).json({ error: 'Email already in use' });
+      }
+      res.status(500).json({ error: 'An unexpected error occurred' });
   }
 };
+
 
 exports.recover = (req, res) => {
   const { email } = req.body;

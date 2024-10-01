@@ -9,8 +9,10 @@ const productSchema = new mongoose.Schema({
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
   gender: { type: String, enum: ['Nam', 'Nữ'], required: true },
   imageUrl: { type: [String], default: [] },
-  stocks: [stockSchema],
-  reviews: [reviewSchema]
+  stocks: {
+    type: [stockSchema], 
+    default: [], 
+  },  reviews: [reviewSchema]
 });
 
 module.exports = mongoose.model('Product', productSchema);

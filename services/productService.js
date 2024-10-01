@@ -1,6 +1,7 @@
 
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+
 exports.createProduct = async (productData) => {
   const product = new Product(productData);
   return await product.save();
@@ -49,4 +50,36 @@ exports.updateProduct = async (id, updateData) => {
 
 exports.deleteProduct = async (id) => {
   return await Product.findByIdAndDelete(id);
+}
+
+const getAllSubcategoryIds = async (parentCategoryId) => {
+  const subcategories = await Category.find({ parentCategoryId }).select('_id');
+  let subcategoryIds = subcategories.map((sub) => sub._id);
+
+  for (const sub of subcategories) {
+    const nestedSubcategoryIds = await getAllSubcategoryIds(sub._id);
+    subcategoryIds = subcategoryIds.concat(nestedSubcategoryIds);
+  }
+
+  return subcategoryIds;
+};
+
+exports.getProductsByCategoryName = async (categoryName) => {
+  try {
+    const mainCategory = await Category.findOne({ name: categoryName });
+  
+    const allCategoryIds = await getAllSubcategoryIds(mainCategory._id);
+
+    // Include the main category ID itself
+    allCategoryIds.push(mainCategory._id);
+    console.log('All Category IDs:', allCategoryIds);
+
+    // Fetch all products that belong to these categories
+    const products = await Product.find({ category: { $in: allCategoryIds } }).populate('category');
+
+    return products;
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    throw error;
+  }
 };

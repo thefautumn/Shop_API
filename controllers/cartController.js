@@ -14,21 +14,37 @@ exports.addToCart = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
-  
   exports.getCart = async (req, res) => {
     try {
+      // Kiểm tra xem User ID có tồn tại không
       if (!req.user || !req.user.id) {
-        throw new Error('User ID is missing in request');
+        return res.status(400).json({ message: 'User ID is missing in request' });
       }
   
       const userId = req.user.id;
+  
+      // Lấy thông tin giỏ hàng của người dùng
       const cart = await cartService.getCartByUserId(userId);
-      res.status(200).json(cart);
+  
+      // Nếu giỏ hàng rỗng, trả về thông báo giỏ hàng rỗng
+      if (cart.items.length === 0) {
+        return res.status(200).json({ message: 'Cart is empty', items: [] });
+      }
+  
+      // Trả về giỏ hàng nếu có sản phẩm
+      return res.status(200).json(cart);
+  
     } catch (error) {
-      console.error('Failed to get cart:', error.message);
-      res.status(500).json({ message: error.message });
+      // Nếu không tìm thấy giỏ hàng, trả về lỗi 404
+      if (error.message === 'Cart not found') {
+        return res.status(404).json({ message: 'Cart not found' });
+      }
+  
+      // Trả về lỗi 500 cho các lỗi khác
+      return res.status(500).json({ message: error.message });
     }
   };
+  
 
   exports.updateCartItemQuantity = async (req, res) => {
     try {

@@ -2,6 +2,7 @@
 
 const productService = require('../services/productService');
 const Category = require('../models/Category');
+
 exports.createProduct = async (req, res) => {
   try {
     const savedProduct = await productService.createProduct(req.body);
@@ -33,6 +34,20 @@ exports.getProductById = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch product with category details', error: error.message });
   }
 };
+
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const { categoryName } = req.params; 
+    // console.log('Category Name from params:', categoryName);
+    const products = await productService.getProductsByCategoryName(categoryName);
+    // console.log('Products Found:', products);
+    res.status(200).json(products);
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    res.status(500).json({ message: error.message || 'An error occurred while fetching products by category' });
+  }
+};
+
 
 exports.updateProduct = async (req, res) => {
   try {

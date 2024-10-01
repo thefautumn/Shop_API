@@ -3,24 +3,30 @@ const User = require('../models/User')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-exports.registerUser = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+
+exports.registerUser = async (firstName, lastName, email, password) => {
+  // Check if the email already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+      throw new Error('Email already in use');
   }
 
-  const { firstName, lastName, email, password } = req.body;
-  try {
-    const user = await authService.registerUser(firstName, lastName, email, password);
-    res.status(201).json(user);
-  } catch (error) {
-    if (error.message === 'Email already in use') {
-      // Lỗi email đã tồn tại
-      return res.status(400).json({ error: 'Email already in use' });
-    }
-    // Lỗi server hoặc lỗi khác không xác định
-    res.status(500).json({ error: 'An unexpected error occurred' });
-  }
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Create a new user with the hashed password
+  const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+  });
+
+  // Save the user to the database
+  await newUser.save();
+
+  // Return the new user (you might want to exclude the password in the response)
+  return newUser;
 };
 
 

@@ -9,5 +9,5 @@ router.post('/', categoryController.createCategory);
 router.patch('/:id', categoryController.updateCategory);
 router.delete('/:id', categoryController.deleteCategory);
 router.get('/subcategories/:parentId', categoryController.getSubcategories);
-
+router.get('/name/:categoryName', categoryController.getCategoryByName);
 module.exports = router;
