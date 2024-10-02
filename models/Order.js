@@ -4,7 +4,7 @@ const orderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'OrderItem', required: true }],
   totalPrice: { type: Number, required: true },
-  orderStatus: { type: String, enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'], default: 'Pending' },
+  orderStatus: { type: String, enum: ['Pending', 'Processing', 'Completed', 'Delivered', 'Cancelled'], default: 'Pending' },
   paymentMethod: { type: String, enum: ['Credit Card', 'PayPal', 'COD', 'VNPay'], required: true },
   shippingAddress: {
     name: { type: String, required: true },

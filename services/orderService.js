@@ -109,3 +109,61 @@ exports.getUserOrders = async (userId) => {
       throw new Error('Failed to fetch orders');
     }
   };
+
+  exports.findOrderById = async (orderId) => {
+    try {
+      const order = await Order.findById(orderId);
+      if (!order) {
+        throw new Error('Order not found');
+      }
+      return order;
+    } catch (error) {
+      throw new Error(error.message || 'Failed to find order');
+    }
+  };
+  
+  // Xóa đơn hàng theo ID
+  exports.deleteOrderById = async (orderId) => {
+    try {
+      await Order.findByIdAndDelete(orderId);
+      return { message: 'Order deleted successfully' };
+    } catch (error) {
+      throw new Error('Failed to delete order');
+    }
+  };
+
+
+  exports.updateOrderStatus = async (orderId, orderStatus) => {
+ 
+    try {
+     const order = await Order.findById(orderId);
+     if (!order) {
+        throw new Error('Order not found');
+      }
+      order.orderStatus = orderStatus;
+      await order.save();
+
+      return  order;
+    } catch (error) {
+        throw new Error(error.message || 'Failed to update order');
+    }
+  };
+
+  exports.getAllOrders = async () => {
+    try {
+  
+      const orders = await Order.find()
+        .populate('userId', 'name email')  
+        .populate({
+          path: 'items',  
+          populate: {
+            path: 'productId',  
+            select: 'name price imageUrl'  
+          }
+        });
+      
+      return orders; // Trả về danh sách các đơn hàng
+    } catch (error) {
+      throw new Error('Failed to fetch orders');
+    }
+  };
