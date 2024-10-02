@@ -48,9 +48,13 @@ exports.addToCart = async (req, res) => {
 
   exports.updateCartItemQuantity = async (req, res) => {
     try {
+        //  console.log('Request Body:', req.body);
         const userId = req.user.id;  
         const { productId, size, quantity } = req.body;
         const updatedCart = await cartService.updateCartItemQuantity(userId, productId, size, quantity);
+             
+        // console.log('Updated Cart:', updatedCart);
+
         res.status(200).json(updatedCart);
     } catch (error) {
         console.error('Failed to update cart item quantity:', error.message);
@@ -80,3 +84,13 @@ exports.getCartForBilling = async (req, res) => {
     res.status(500).json({ message: 'Failed to retrieve cart details' });
   }
 };
+
+exports.clearCart = async(req, res)=>{
+  try {
+    const userId = req.user.id;
+    const cart = await cartService.clearCart(userId)
+     res.status(200).json(cart);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete cart dtails' });
+  }
+}

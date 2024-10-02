@@ -9,5 +9,5 @@ router.get('/', authMiddleware, cartController.getCart);
 router.put('/update-quantity', authMiddleware, cartController.updateCartItemQuantity);
 router.delete('/remove-item', authMiddleware, cartController.removeCartItem);
 router.get('/billing-information', authMiddleware, cartController.getCartForBilling);
-
+router.delete('/clear-cart', authMiddleware, cartController.clearCart);
 module.exports = router;

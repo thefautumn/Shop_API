@@ -83,12 +83,16 @@ exports.getCartByUserId = async (userId) => {
     }
 
     const cartItem = cart.items.find(item => item.productId.toString() === productId && item.size === size);
+ 
     if (!cartItem) {
         throw new Error('Item not found in cart.');
     }
 
     cartItem.quantity = quantity;
+    
+    console.log('Cart items:' + cartItem);
 
+    await cartItem.save();
     await cart.save();
     return cart;
 };
@@ -140,5 +144,22 @@ exports.getCartWithUserDetails = async (userId) => {
     return cart;
   } catch (error) {
     throw new Error(`Failed to get cart: ${error.message}`);
+  }
+};
+
+exports.clearCart = async (userId) => {
+  try {
+    const cart = await Cart.findOne({ userId })
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    cart.items = [];
+    cart.totalPrice = 0;
+    await cart.save();
+
+    return cart;
+  } catch (error) {
+    console.error('Failed to clear cart:', error);
   }
 };
